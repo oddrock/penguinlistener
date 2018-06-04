@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.oddrock.penguin.penguinlistener.entity.PenguinMsgMapper">
-    <insert id="addMsg" parameterType="com.oddrock.penguin.penguinlistener.entity.PenguinMsg">
+<mapper namespace="com.oddrock.penguin.penguinlistener.entity.PenguinIMMsgMapper">
+    <insert id="addMsg" parameterType="com.oddrock.penguin.penguinlistener.entity.PenguinIMMsg">
         insert into t_penguin_msg(msg_class,summary,content,id,post_type,receiver,receiver_id,receiver_uid,sender,sender_id,sender_uid,time,type,record_time,qqgroup,qqgroup_id,qqgroup_uid) values(#{msg_class},#{summary},#{content},#{id},#{post_type},#{receiver},#{receiver_id},#{receiver_uid},#{sender},#{sender_id},#{sender_uid},#{time},#{type},#{record_time},#{qqgroup},#{qqgroup_id},#{qqgroup_uid})
     </insert>
+    <!-- <insert id="addMsg" parameterType="com.oddrock.penguin.penguinlistener.entity.PenguinIMMsg">
+        insert into t_penguin_msg(content) values(#{content})
+    </insert> -->
 </mapper>

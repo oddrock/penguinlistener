@@ -1,7 +1,7 @@
 package com.oddrock.penguin.penguinlistener.entity;
 import java.util.Date;
 
-public class PenguinMsg {
+public class PenguinIMMsg {
 	private String msg_class;
 	private String content;
 	private long id;
