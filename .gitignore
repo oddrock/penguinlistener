@@ -2,8 +2,6 @@
 /.settings
 .classpath
 .project
-/src/main/resources/
-/settings/
-/logs/
+/src/main/resources/secret/
 TODO.md
 README.md

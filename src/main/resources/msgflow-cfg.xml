@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://camel.apache.org/schema/spring	http://camel.apache.org/schema/spring/camel-spring-2.13.0.xsd
+       http://www.springframework.org/schema/context	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<context:property-placeholder ignore-unresolvable="true" location="classpath:cfg.properties" />
+	
+	<!-- jetty配置 start -->
+	<bean id="jetty" class="org.apache.camel.component.jetty9.JettyHttpComponent9">    
+		<property name="minThreads" value="${httpserver.jetty.minThreads}"/>    
+		<property name="maxThreads" value="${httpserver.jetty.maxThreads}"/>
+	</bean> 
+	<!-- jetty配置 end -->
+	
+	<camelContext id="test.dataflowcontext" xmlns="http://camel.apache.org/schema/spring">
+		<propertyPlaceholder id="test.props" location="classpath:cfg.properties" />
+		<route id="test">
+			<from uri="{{httpserver.mode}}:http://{{ip}}:{{test.httpserver.port}}/{{projectname}}/{{test.httpserver.uri}}{{httpserver.params}}" />
+			<to uri="bean:plugins4Test?method=test" />
+		</route>
+	</camelContext>
+	
+	<camelContext id="penguinIM.dataflowcontext" xmlns="http://camel.apache.org/schema/spring">
+		<propertyPlaceholder id="penguin.props" location="classpath:cfg.properties" />
+		<endpoint uri="seda:asyncSecondStage?waitForTaskToComplete=Never&amp;concurrentConsumers={{seda.threadcount}}&amp;blockWhenFull=true&amp;size={{seda.queuesize}}&amp;timeout={{seda.queuesize}}" id="secondStage" />
+		
+		<route id="penguinIM">
+			<from uri="{{httpserver.mode}}:http://{{ip}}:{{httpserver.port}}/{{projectname}}/{{penguinim.httpserver.uri}}{{httpserver.params}}" />
+			<to uri="seda:asyncSecondStage?waitForTaskToComplete=Never&amp;concurrentConsumers={{seda.threadcount}}&amp;blockWhenFull=true&amp;size={{seda.queuesize}}&amp;timeout={{seda.timeout}}"/>
+		</route>
+		
+		<route>
+			<from ref="secondStage" />
+			<to uri="bean:plugins4PenguinIM?method=rcv" />
+			<to uri="bean:plugins4PenguinIM?method=saveDb" />
+			<to uri="bean:plugins4PenguinIM?method=alert" />
+		</route>
+	</camelContext>
+</beans>
